@@ -1,8 +1,6 @@
 # GODART
 
-
 Alexa skill to have DART times for the requested station.
-
 
 ## build and deploy
 
@@ -15,5 +13,5 @@ zip up the go executable.
 update the lambda zip.  
 `aws lambda update-function-code --function-name godart --zip fileb://./alexa.zip`
 
-invoke the lambda and log the results.
+invoke the lambda and log the results.  
 `aws lambda invoke --function-name godart --log-type Tail outfile | grep "LogResult"| awk -F'"' '{print $4}' | base64 --decode`

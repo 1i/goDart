@@ -15,17 +15,16 @@ import (
 
 func IntentDispatcher(ctx context.Context, request alexa.Request) (alexa.Response, error) {
 	fmt.Print("start IntentDispatcher \n")
+	spew.Dump(request)
 	var response alexa.Response
 
 	switch request.Body.Intent.Name {
-
 	case "LaunchRequest":
 		response = alexa.NewSimpleResponse("Unknown Request", makeRequest("Bray"))
 	case "stationIntent":
 		station := request.Body.Intent.Slots["station"].Value
 		if len(station) == 0 {
 			fmt.Println("Unable to get station")
-			spew.Dump(request)
 
 			response = alexa.NewSimpleResponse("Unknown Request", "Unable to get station")
 		}

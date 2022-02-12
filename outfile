@@ -1,0 +1,1 @@
+{"version":"1.0","response":{"outputSpeech":{"type":"PlainText","text":"The intent was unrecognized","image":{}},"card":{"type":"Simple","title":"Unknown Request","content":"The intent was unrecognized","image":{}},"shouldEndSession":true}}

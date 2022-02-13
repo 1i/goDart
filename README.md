@@ -15,16 +15,3 @@ update the lambda zip.
 
 invoke the lambda and log the results.  
 `aws lambda invoke --cli-binary-format raw-in-base64-out --function-name godart --payload '{"request": {"locale": "en-US","requestId": "amzn1.echo-api.request.a1d80dd9-0538-4f62-ba27-decfd8ade0d8","shouldLinkResultBeReturned": false,"timestamp": "2022-02-12T16:30:15Z","type": "LaunchRequest"},"version": "1.0"}' --log-type Tail outfile | grep "LogResult"| awk -F'"' '{print $4}' | base64 --decode`
-
-```
-    {
-        "version": "1.0",
-        "request": {
-            "type": "LaunchRequest",
-            "requestId": "amzn1.echo-api.request.a1d80dd9-0538-4f62-ba27-decfd8ade0d8",
-            "locale": "en-US",
-            "timestamp": "2022-02-12T16:30:15Z",
-            "shouldLinkResultBeReturned": false
-        }
-    }
-```

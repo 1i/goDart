@@ -16,23 +16,30 @@ import (
 func IntentDispatcher(ctx context.Context, request alexa.Request) (alexa.Response, error) {
 	fmt.Print("start IntentDispatcher \n")
 	spew.Dump(request)
+	spewString := spew.Sdump(request)
+
+	fmt.Printf("spew request %s", spewString)
+	fmt.Printf("request %s", request)
+
 	var response alexa.Response
 
-	switch request.Body.Intent.Name {
+	switch request.Body.Type {
 	case "LaunchRequest":
-		response = alexa.NewSimpleResponse("Unknown Request", makeRequest("Bray"))
+		response = alexa.NewSimpleResponse("LaunchRequest", makeRequest("malahide"))
+	case "IntentRequest":
+		response = alexa.NewSimpleResponse("IntentRequest", makeRequest("greystones"))
+	case "HelloWorldIntent":
+		response = alexa.NewSimpleResponse("HelloWorldIntent", makeRequest("howth"))
 	case "stationIntent":
 		station := request.Body.Intent.Slots["station"].Value
 		if len(station) == 0 {
 			fmt.Println("Unable to get station")
-
-			response = alexa.NewSimpleResponse("Unknown Request", "Unable to get station")
+			response = alexa.NewSimpleResponse("Unable to get station", "Unable to get station")
 		}
 		fmt.Printf("station %s . \n" + station)
-
-		response = alexa.NewSimpleResponse("Unknown Request", makeRequest(station))
+		response = alexa.NewSimpleResponse("stationIntent", makeRequest(station))
 	default:
-		response = alexa.NewSimpleResponse("Unknown Request", "The intent was unrecognized")
+		response = alexa.NewSimpleResponse("The intent was unrecognized", makeRequest("bray"))
 	}
 	fmt.Print("end IntentDispatcher \n")
 
@@ -58,6 +65,7 @@ type Stations struct {
 }
 
 func makeRequest(station string) string {
+	fmt.Printf("makeRequest for %s", station)
 	startionUrl := fmt.Sprintf("http://api.irishrail.ie/realtime/realtime.asmx/getStationDataByNameXML?StationDesc=%s", station)
 	xmlFile, err := http.Get(startionUrl)
 	if err != nil {
@@ -83,16 +91,11 @@ func makeRequest(station string) string {
 		}
 
 		if results.Stations[i].Direction == "Northbound" && dueInTime < 60 {
-			northBoundresponse = northBoundresponse + ", " + results.Stations[i].DueIn
+			northBoundresponse = northBoundresponse + results.Stations[i].DueIn + ", "
 		}
 		if results.Stations[i].Direction == "Southbound" && dueInTime < 60 {
-			southBoundresponse = southBoundresponse + ", " + results.Stations[i].DueIn
+			southBoundresponse = southBoundresponse + results.Stations[i].DueIn + ", "
 		}
-
-		fmt.Printf("Direction: %s ", results.Stations[i].Direction)
-		fmt.Printf("Destination: %s ", results.Stations[i].Destination)
-		fmt.Printf("DueIn : %s \n", results.Stations[i].DueIn)
-
 	}
 	response := "For " + results.Stations[0].StationFullName + " " + northBoundresponse + " minutes. " + southBoundresponse + " minutes. "
 	fmt.Println("response " + response)
